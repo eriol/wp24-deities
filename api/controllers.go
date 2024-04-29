@@ -28,7 +28,7 @@ func preflight(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Max-Age", "86400")
 }
 
-func validateToken(w *http.ResponseWriter, r *http.Request) error {
+func validateToken(r *http.Request) error {
 	_, err := oauthsrv.ValidationBearerToken(r)
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func token(w http.ResponseWriter, r *http.Request) {
 // This endpoint is the root of the API.
 func info(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
-	err := validateToken(&w, r)
+	err := validateToken(r)
 	if err != nil {
 		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
 		return
@@ -81,7 +81,7 @@ func info(w http.ResponseWriter, r *http.Request) {
 // Return an array with all the deities.
 func getDeities(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
-	err := validateToken(&w, r)
+	err := validateToken(r)
 	if err != nil {
 		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
 		return
@@ -101,7 +101,7 @@ func getDeities(w http.ResponseWriter, r *http.Request) {
 // Return the specified (in the path) deity.
 func getDeity(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
-	err := validateToken(&w, r)
+	err := validateToken(r)
 	if err != nil {
 		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
 		return
@@ -131,7 +131,7 @@ func getDeity(w http.ResponseWriter, r *http.Request) {
 // Return the specified (in the path) deity influence.
 func getDeityInfluence(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
-	err := validateToken(&w, r)
+	err := validateToken(r)
 	if err != nil {
 		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
 		return
@@ -161,7 +161,7 @@ func getDeityInfluence(w http.ResponseWriter, r *http.Request) {
 // Return a random deity.
 func random(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
-	err := validateToken(&w, r)
+	err := validateToken(r)
 	if err != nil {
 		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
 		return
