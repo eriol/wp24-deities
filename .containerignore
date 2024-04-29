@@ -1,0 +1,7 @@
+*.md
+*.sqlite
+.containerignore
+.git
+.github
+.gitignore
+wp24-deities
