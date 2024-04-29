@@ -18,16 +18,45 @@ type ApiError struct {
 	Error string `json:"error"`
 }
 
+func useraAuthorizationHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
+	return "eriol", nil
+}
+
 func preflight(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Method", "GET, OPTIONS")
 	(*w).Header().Set("Access-Control-Max-Age", "86400")
 }
 
+func validateToken(w *http.ResponseWriter, r *http.Request) error {
+	_, err := oauthsrv.ValidationBearerToken(r)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func authorize(w http.ResponseWriter, r *http.Request) {
+	err := oauthsrv.HandleAuthorizeRequest(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+}
+
+func token(w http.ResponseWriter, r *http.Request) {
+	oauthsrv.HandleTokenRequest(w, r)
+}
+
 // Return API description.
 // This endpoint is the root of the API.
 func info(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
+	err := validateToken(&w, r)
+	if err != nil {
+		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
+		return
+	}
 
 	// The "/" pattern matches everything, so check if we are at the
 	// root and return a 403 otherwise (we blame the client for endpoints that
@@ -52,6 +81,11 @@ func info(w http.ResponseWriter, r *http.Request) {
 // Return an array with all the deities.
 func getDeities(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
+	err := validateToken(&w, r)
+	if err != nil {
+		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
+		return
+	}
 
 	deities, err := database.GetDeities()
 
@@ -67,6 +101,11 @@ func getDeities(w http.ResponseWriter, r *http.Request) {
 // Return the specified (in the path) deity.
 func getDeity(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
+	err := validateToken(&w, r)
+	if err != nil {
+		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
+		return
+	}
 
 	slug := strings.TrimSpace(r.PathValue("slug"))
 	if slug == "" {
@@ -92,6 +131,11 @@ func getDeity(w http.ResponseWriter, r *http.Request) {
 // Return the specified (in the path) deity influence.
 func getDeityInfluence(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
+	err := validateToken(&w, r)
+	if err != nil {
+		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
+		return
+	}
 
 	slug := strings.TrimSpace(r.PathValue("slug"))
 	if slug == "" {
@@ -117,6 +161,11 @@ func getDeityInfluence(w http.ResponseWriter, r *http.Request) {
 // Return a random deity.
 func random(w http.ResponseWriter, r *http.Request) {
 	preflight(&w)
+	err := validateToken(&w, r)
+	if err != nil {
+		toJSON(w, http.StatusForbidden, ApiError{Error: err.Error()})
+		return
+	}
 
 	deity, err := database.GetRandomDeity()
 
