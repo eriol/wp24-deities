@@ -1,0 +1,11 @@
+---
+version: "3"
+
+services:
+  api:
+    image: quay.io/eriol/wp24-deities:latest
+    restart: always
+    environment:
+      - WP24_DEITIES_CLIENT_ID=${WP24_DEITIES_CLIENT_ID}
+      - WP24_DEITIES_CLIENT_SECRET={WP24_DEITIES_CLIENT_SECRET}
+      - WP24_DEITIES_DOMAIN=${WP24_DEITIES_DOMAIN}
