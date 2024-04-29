@@ -10,6 +10,8 @@ import (
 	"github.com/go-oauth2/oauth2/v4/models"
 	"github.com/go-oauth2/oauth2/v4/server"
 	"github.com/go-oauth2/oauth2/v4/store"
+
+	"github.com/eriol/wp24-deities/cfg"
 )
 
 var oauthsrv *server.Server
@@ -20,10 +22,11 @@ func Serve() {
 	manager.MustTokenStorage(store.NewMemoryTokenStore())
 
 	clientStore := store.NewClientStore()
-	clientStore.Set("000000", &models.Client{
-		ID:     "000000",
-		Secret: "999999",
-		Domain: "http://localhost",
+	clientId := cfg.GetClientId()
+	clientStore.Set(clientId, &models.Client{
+		ID:     clientId,
+		Secret: cfg.GetClientSecret(),
+		Domain: cfg.GetDomain(),
 	})
 	manager.MapClientStorage(clientStore)
 	srv := server.NewDefaultServer(manager)
