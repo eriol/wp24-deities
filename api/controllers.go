@@ -143,7 +143,12 @@ func getDeityInfluence(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	influence, err := database.GetDeityInfluence(slug)
+	influence := []database.OlympianInfluence{}
+	if slug == "eris" {
+		influence, err = database.GetErisInfluence()
+	} else {
+		influence, err = database.GetDeityInfluence(slug)
+	}
 
 	if err != nil {
 		log.Println(err)

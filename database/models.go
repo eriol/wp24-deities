@@ -1,6 +1,10 @@
 package database // import "github.com/eriol/wp24-deities/database"
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
 
 type Deity struct {
 	Id          string `json:"id"`
@@ -127,6 +131,39 @@ func GetDeityInfluence(id string) ([]OlympianInfluence, error) {
 		err = rows.Scan(
 			&olympianInfluence.SportId,
 			&olympianInfluence.Influence,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		influences = append(influences, olympianInfluence)
+	}
+
+	return influences, nil
+}
+
+// Return Eris influence on sports.
+// As goddess of discord Eris will return always a negative influence on
+// all sports but random to make people more concerned.
+func GetErisInfluence() ([]OlympianInfluence, error) {
+	query := `
+    SELECT
+        sport_id
+    FROM
+        sports;`
+
+	rows, err := database.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	influences := make([]OlympianInfluence, 0)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	for rows.Next() {
+		olympianInfluence := OlympianInfluence{Influence: r.Float32()}
+		err = rows.Scan(
+			&olympianInfluence.SportId,
 		)
 		if err != nil {
 			return nil, err
