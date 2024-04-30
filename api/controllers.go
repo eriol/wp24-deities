@@ -24,8 +24,9 @@ func useraAuthorizationHandler(w http.ResponseWriter, r *http.Request) (userID s
 
 func preflight(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Method", "GET, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	(*w).Header().Set("Access-Control-Max-Age", "86400")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Authorization")
 }
 
 func validateToken(r *http.Request) error {
