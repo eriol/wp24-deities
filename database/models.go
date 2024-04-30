@@ -16,6 +16,7 @@ type Deity struct {
 type OlympianInfluence struct {
 	SportId   string  `json:"sport_id"`
 	Influence float32 `json:"influence"`
+	Name      string  `json:"name"`
 }
 
 func GetDeities() ([]Deity, error) {
@@ -112,12 +113,17 @@ func GetRandomDeity() (Deity, error) {
 func GetDeityInfluence(id string) ([]OlympianInfluence, error) {
 	query := `
     SELECT
-        sport_id,
-        influence
+        olympian_influence.sport_id,
+        olympian_influence.influence,
+        sports.name
     FROM
         olympian_influence
+    INNER JOIN
+        sports
+    ON
+        olympian_influence.sport_id = sports.sport_id
     WHERE
-        deity_id = ?;`
+        olympian_influence.deity_id = ?;`
 
 	rows, err := database.Query(query, id)
 	if err != nil {
@@ -131,6 +137,7 @@ func GetDeityInfluence(id string) ([]OlympianInfluence, error) {
 		err = rows.Scan(
 			&olympianInfluence.SportId,
 			&olympianInfluence.Influence,
+			&olympianInfluence.Name,
 		)
 		if err != nil {
 			return nil, err
@@ -148,7 +155,8 @@ func GetDeityInfluence(id string) ([]OlympianInfluence, error) {
 func GetErisInfluence() ([]OlympianInfluence, error) {
 	query := `
     SELECT
-        sport_id
+        sport_id,
+        name
     FROM
         sports;`
 
@@ -164,6 +172,7 @@ func GetErisInfluence() ([]OlympianInfluence, error) {
 		olympianInfluence := OlympianInfluence{Influence: r.Float32()}
 		err = rows.Scan(
 			&olympianInfluence.SportId,
+			&olympianInfluence.Name,
 		)
 		if err != nil {
 			return nil, err
