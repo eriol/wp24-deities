@@ -11,7 +11,7 @@ RUN sqlite3 deities.sqlite ".read extras/deities.sql"
 
 FROM docker.io/alpine:3.19
 
-LABEL LastUpdate="2024/04/29"
+LABEL LastUpdate="2024/04/30"
 COPY --from=builder /app/wp24-deities /wp24-deities
 COPY --from=builder /app/deities.sqlite /deities.sqlite
 RUN apk -U --no-cache upgrade
