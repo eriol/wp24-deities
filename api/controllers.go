@@ -38,6 +38,8 @@ func validateToken(r *http.Request) error {
 }
 
 func authorize(w http.ResponseWriter, r *http.Request) {
+	preflight(&w)
+
 	err := oauthsrv.HandleAuthorizeRequest(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -45,6 +47,8 @@ func authorize(w http.ResponseWriter, r *http.Request) {
 }
 
 func token(w http.ResponseWriter, r *http.Request) {
+	preflight(&w)
+
 	oauthsrv.HandleTokenRequest(w, r)
 }
 
