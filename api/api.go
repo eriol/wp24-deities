@@ -51,6 +51,7 @@ func Serve() {
 	router.HandleFunc("GET /deities", getDeities)
 	router.HandleFunc("GET /deities/{slug}", getDeity)
 	router.HandleFunc("GET /deities/{slug}/influence", getDeityInfluence)
+	router.HandleFunc("OPTIONS /deities/{slug}/influence", cors)
 	router.HandleFunc("GET /random", random)
 	router.HandleFunc("OPTIONS /random", cors)
 
