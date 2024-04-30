@@ -29,6 +29,10 @@ func preflight(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Authorization")
 }
 
+func cors(w http.ResponseWriter, r *http.Request) {
+	preflight(&w)
+}
+
 func validateToken(r *http.Request) error {
 	_, err := oauthsrv.ValidationBearerToken(r)
 	if err != nil {
